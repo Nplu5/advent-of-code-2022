@@ -1,13 +1,8 @@
 fun main() {
-    fun mapToIndexedElves(input: List<String>) = input.map { line ->
+    fun mapToIndexedElves(input: List<String>) = input.fold(mutableListOf(Elf())) { elves, line ->
         when {
-            line.isEmpty() -> Separator
-            else -> Calorie(line.toInt())
-        }
-    }.fold(mutableListOf(Elf())) { elves, expression ->
-        when (expression) {
-            is Separator -> elves.apply { add(Elf()) }
-            is Calorie -> elves.apply { last().addCalorie(expression) }
+            line.isEmpty() -> elves.apply { add(Elf()) }
+            else -> elves.apply { last().addCalorie(Calorie(line.toInt())) }
         }
     }.mapIndexed { index, elf ->
         index + 1 to elf
@@ -37,9 +32,7 @@ fun main() {
     println(part2(input))
 }
 
-sealed interface Expression
-data class Calorie(val amountOfCalories: Int) : Expression
-object Separator : Expression
+data class Calorie(val amountOfCalories: Int)
 
 class Elf{
     private val carriedCalories = mutableListOf<Calorie>()
